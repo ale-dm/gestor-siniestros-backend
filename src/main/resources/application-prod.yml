@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    com.portfolio.siniestros: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN

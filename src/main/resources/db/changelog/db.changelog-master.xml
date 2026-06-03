@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Las migraciones se incluyen en orden; NO cambiar el orden una vez en producción -->
+    <include file="db/changelog/changes/001-create-usuarios.xml"/>
+    <include file="db/changelog/changes/002-create-clientes.xml"/>
+    <include file="db/changelog/changes/003-create-polizas.xml"/>
+    <include file="db/changelog/changes/004-create-siniestros.xml"/>
+    <include file="db/changelog/changes/005-create-log-siniestro.xml"/>
+    <include file="db/changelog/changes/006-insert-data-inicial.xml"/>
+    <include file="db/changelog/changes/007-fix-passwords.xml"/>
+
+</databaseChangeLog>

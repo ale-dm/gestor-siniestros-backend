@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="005-create-log-siniestro" author="portfolio">
+        <createTable tableName="log_siniestro">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="siniestro_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_log_siniestro"
+                             references="siniestros(id)"/>
+            </column>
+            <column name="estado_anterior" type="VARCHAR(20)"/>
+            <column name="estado_nuevo" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="observaciones" type="TEXT"/>
+            <column name="usuario_id" type="BIGINT">
+                <constraints nullable="true"
+                             foreignKeyName="fk_log_usuario"
+                             references="usuarios(id)"/>
+            </column>
+            <column name="fecha" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="log_siniestro" indexName="idx_log_siniestro_id">
+            <column name="siniestro_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

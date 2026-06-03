@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="004-create-siniestros" author="portfolio">
+        <createTable tableName="siniestros">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="numero_siniestro" type="VARCHAR(25)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="descripcion" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="estado" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fecha_apertura" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fecha_resolucion" type="TIMESTAMP"/>
+            <column name="importe_reclamado" type="NUMERIC(12,2)"/>
+            <column name="importe_indemnizado" type="NUMERIC(12,2)"/>
+            <column name="observaciones" type="TEXT"/>
+            <column name="poliza_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_siniestros_poliza"
+                             references="polizas(id)"/>
+            </column>
+            <column name="perito_id" type="BIGINT">
+                <constraints nullable="true"
+                             foreignKeyName="fk_siniestros_perito"
+                             references="usuarios(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="siniestros" indexName="idx_siniestros_poliza">
+            <column name="poliza_id"/>
+        </createIndex>
+        <createIndex tableName="siniestros" indexName="idx_siniestros_perito">
+            <column name="perito_id"/>
+        </createIndex>
+        <createIndex tableName="siniestros" indexName="idx_siniestros_estado">
+            <column name="estado"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

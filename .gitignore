@@ -1,0 +1,23 @@
+# Build
+target/
+*.class
+*.jar
+*.war
+
+# Secretos — NUNCA subir
+.env
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven wrapper (opcional si no lo usas)
+# .mvn/

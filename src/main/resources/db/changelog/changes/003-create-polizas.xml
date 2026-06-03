@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="003-create-polizas" author="portfolio">
+        <createTable tableName="polizas">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="numero_poliza" type="VARCHAR(30)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="tipo" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="estado" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fecha_inicio" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fecha_vencimiento" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cobertura_maxima" type="NUMERIC(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prima_mensual" type="NUMERIC(8,2)"/>
+            <column name="descripcion" type="VARCHAR(500)"/>
+            <column name="cliente_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_polizas_cliente"
+                             references="clientes(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="polizas" indexName="idx_polizas_cliente">
+            <column name="cliente_id"/>
+        </createIndex>
+        <createIndex tableName="polizas" indexName="idx_polizas_estado_tipo">
+            <column name="estado"/>
+            <column name="tipo"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
