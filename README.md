@@ -1,5 +1,10 @@
 # Gestor de Siniestros — Backend
 
+![CI](https://github.com/ale-dm/gestor-siniestros-backend/actions/workflows/ci.yml/badge.svg)
+![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-6DB33F?logo=springboot)
+![Deploy](https://img.shields.io/badge/deploy-Railway-blueviolet?logo=railway)
+
 API REST para la gestión de siniestros de seguros. Proyecto de portfolio full-stack construido con Spring Boot 3, PostgreSQL y JWT.
 
 🌐 **Demo**: https://gestor-siniestros-frontend.vercel.app  
@@ -222,6 +227,24 @@ clientes ──< polizas
 | `admin` | `password123` | ADMIN |
 | `gestor1` | `password123` | GESTOR |
 | `perito1` | `password123` | PERITO |
+
+---
+
+## Tests
+
+El proyecto incluye tests unitarios y de integración con **JUnit 5 + Mockito + MockMvc**.
+
+```bash
+mvn test
+```
+
+| Clase | Tipo | Casos |
+|---|---|---|
+| `SiniestroServiceTest` | Unitario | 11 — máquina de estados, validaciones de negocio, permisos por rol |
+| `ClienteServiceTest` | Unitario | 7 — DNI duplicado, soft delete, not found |
+| `SiniestroControllerTest` | Integración (MockMvc) | 7 — HTTP status, seguridad por rol, formato errores |
+
+El workflow de GitHub Actions ejecuta `mvn test` automáticamente en cada push y pull request.
 
 ---
 
