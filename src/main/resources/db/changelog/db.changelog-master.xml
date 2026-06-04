@@ -13,5 +13,6 @@
     <include file="db/changelog/changes/005-create-log-siniestro.xml"/>
     <include file="db/changelog/changes/006-insert-data-inicial.xml"/>
     <include file="db/changelog/changes/007-fix-passwords.xml"/>
+    <include file="db/changelog/changes/008-insert-more-data.xml"/>
 
 </databaseChangeLog>

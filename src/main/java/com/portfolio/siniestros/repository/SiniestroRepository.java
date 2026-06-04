@@ -49,4 +49,11 @@ public interface SiniestroRepository extends JpaRepository<Siniestro, Long> {
 
     @Query("SELECT COALESCE(MAX(CAST(SUBSTRING(s.numeroSiniestro, 10) AS int)), 0) FROM Siniestro s WHERE s.numeroSiniestro LIKE :prefix%")
     int findMaxSecuenciaByPrefix(@Param("prefix") String prefix);
+
+    @Query("""
+            SELECT s FROM Siniestro s
+            WHERE LOWER(s.numeroSiniestro) LIKE LOWER(CONCAT('%', :q, '%'))
+            OR LOWER(s.descripcion) LIKE LOWER(CONCAT('%', :q, '%'))
+            """)
+    List<Siniestro> search(@Param("q") String q, Pageable pageable);
 }

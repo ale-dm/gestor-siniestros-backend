@@ -30,4 +30,11 @@ public interface PolizaRepository extends JpaRepository<Poliza, Long> {
 
     @Query("SELECT COALESCE(MAX(CAST(SUBSTRING(p.numeroPoliza, 10) AS int)), 0) FROM Poliza p WHERE p.numeroPoliza LIKE :prefix%")
     int findMaxSecuenciaByPrefix(@Param("prefix") String prefix);
+
+    @Query("""
+            SELECT p FROM Poliza p
+            WHERE LOWER(p.numeroPoliza) LIKE LOWER(CONCAT('%', :q, '%'))
+            OR LOWER(p.descripcion) LIKE LOWER(CONCAT('%', :q, '%'))
+            """)
+    List<Poliza> search(@Param("q") String q, Pageable pageable);
 }

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="008-insert-more-data" author="portfolio">
+
+        <!-- ── Más clientes ──────────────────────────────────────────── -->
+        <insert tableName="clientes">
+            <column name="nombre" value="Carmen"/>
+            <column name="apellidos" value="López Ruiz"/>
+            <column name="dni" value="33445566C"/>
+            <column name="email" value="carmen.lopez@email.com"/>
+            <column name="telefono" value="622100200"/>
+            <column name="direccion" value="Calle Serrano 45, Madrid"/>
+            <column name="activo" valueBoolean="true"/>
+        </insert>
+        <insert tableName="clientes">
+            <column name="nombre" value="David"/>
+            <column name="apellidos" value="Martínez Sanz"/>
+            <column name="dni" value="44556677D"/>
+            <column name="email" value="david.martinez@email.com"/>
+            <column name="telefono" value="633200300"/>
+            <column name="direccion" value="Paseo de Gracia 12, Barcelona"/>
+            <column name="activo" valueBoolean="true"/>
+        </insert>
+        <insert tableName="clientes">
+            <column name="nombre" value="Elena"/>
+            <column name="apellidos" value="García Vega"/>
+            <column name="dni" value="55667788E"/>
+            <column name="email" value="elena.garcia@email.com"/>
+            <column name="telefono" value="644300400"/>
+            <column name="direccion" value="Gran Vía 8, Bilbao"/>
+            <column name="activo" valueBoolean="true"/>
+        </insert>
+        <insert tableName="clientes">
+            <column name="nombre" value="Francisco"/>
+            <column name="apellidos" value="Sánchez Mora"/>
+            <column name="dni" value="66778899F"/>
+            <column name="email" value="fran.sanchez@email.com"/>
+            <column name="telefono" value="655400500"/>
+            <column name="direccion" value="Rambla Catalunya 55, Barcelona"/>
+            <column name="activo" valueBoolean="true"/>
+        </insert>
+        <insert tableName="clientes">
+            <column name="nombre" value="Isabel"/>
+            <column name="apellidos" value="Romero Díaz"/>
+            <column name="dni" value="77889900G"/>
+            <column name="email" value="isabel.romero@email.com"/>
+            <column name="telefono" value="666500600"/>
+            <column name="direccion" value="Avenida Constitución 3, Sevilla"/>
+            <column name="activo" valueBoolean="true"/>
+        </insert>
+        <insert tableName="clientes">
+            <column name="nombre" value="Jorge"/>
+            <column name="apellidos" value="Torres Blanco"/>
+            <column name="dni" value="88990011H"/>
+            <column name="email" value="jorge.torres@email.com"/>
+            <column name="telefono" value="677600700"/>
+            <column name="direccion" value="Calle Larios 20, Málaga"/>
+            <column name="activo" valueBoolean="true"/>
+        </insert>
+
+        <!-- ── Más pólizas ───────────────────────────────────────────── -->
+        <insert tableName="polizas">
+            <column name="numero_poliza" value="POL-2024-00003"/>
+            <column name="tipo" value="VIDA"/>
+            <column name="estado" value="ACTIVA"/>
+            <column name="fecha_inicio" valueDate="2024-01-01"/>
+            <column name="fecha_vencimiento" valueDate="2034-01-01"/>
+            <column name="cobertura_maxima" valueNumeric="200000.00"/>
+            <column name="prima_mensual" valueNumeric="120.00"/>
+            <column name="descripcion" value="Seguro de vida familiar"/>
+            <column name="cliente_id" valueComputed="(SELECT id FROM clientes WHERE dni = '33445566C')"/>
+        </insert>
+        <insert tableName="polizas">
+            <column name="numero_poliza" value="POL-2024-00004"/>
+            <column name="tipo" value="SALUD"/>
+            <column name="estado" value="ACTIVA"/>
+            <column name="fecha_inicio" valueDate="2024-02-01"/>
+            <column name="fecha_vencimiento" valueDate="2025-02-01"/>
+            <column name="cobertura_maxima" valueNumeric="15000.00"/>
+            <column name="prima_mensual" valueNumeric="95.00"/>
+            <column name="descripcion" value="Seguro salud plus"/>
+            <column name="cliente_id" valueComputed="(SELECT id FROM clientes WHERE dni = '44556677D')"/>
+        </insert>
+        <insert tableName="polizas">
+            <column name="numero_poliza" value="POL-2024-00005"/>
+            <column name="tipo" value="AUTO"/>
+            <column name="estado" value="ACTIVA"/>
+            <column name="fecha_inicio" valueDate="2024-03-15"/>
+            <column name="fecha_vencimiento" valueDate="2025-03-15"/>
+            <column name="cobertura_maxima" valueNumeric="40000.00"/>
+            <column name="prima_mensual" valueNumeric="75.00"/>
+            <column name="descripcion" value="Seguro auto terceros ampliado"/>
+            <column name="cliente_id" valueComputed="(SELECT id FROM clientes WHERE dni = '55667788E')"/>
+        </insert>
+        <insert tableName="polizas">
+            <column name="numero_poliza" value="POL-2024-00006"/>
+            <column name="tipo" value="HOGAR"/>
+            <column name="estado" value="SUSPENDIDA"/>
+            <column name="fecha_inicio" valueDate="2023-06-01"/>
+            <column name="fecha_vencimiento" valueDate="2024-06-01"/>
+            <column name="cobertura_maxima" valueNumeric="60000.00"/>
+            <column name="prima_mensual" valueNumeric="52.00"/>
+            <column name="descripcion" value="Seguro hogar básico"/>
+            <column name="cliente_id" valueComputed="(SELECT id FROM clientes WHERE dni = '66778899F')"/>
+        </insert>
+        <insert tableName="polizas">
+            <column name="numero_poliza" value="POL-2025-00001"/>
+            <column name="tipo" value="AUTO"/>
+            <column name="estado" value="ACTIVA"/>
+            <column name="fecha_inicio" valueDate="2025-01-01"/>
+            <column name="fecha_vencimiento" valueDate="2026-01-01"/>
+            <column name="cobertura_maxima" valueNumeric="25000.00"/>
+            <column name="prima_mensual" valueNumeric="65.00"/>
+            <column name="descripcion" value="Seguro auto todo riesgo"/>
+            <column name="cliente_id" valueComputed="(SELECT id FROM clientes WHERE dni = '77889900G')"/>
+        </insert>
+        <insert tableName="polizas">
+            <column name="numero_poliza" value="POL-2025-00002"/>
+            <column name="tipo" value="HOGAR"/>
+            <column name="estado" value="ACTIVA"/>
+            <column name="fecha_inicio" valueDate="2025-02-01"/>
+            <column name="fecha_vencimiento" valueDate="2026-02-01"/>
+            <column name="cobertura_maxima" valueNumeric="80000.00"/>
+            <column name="prima_mensual" valueNumeric="68.00"/>
+            <column name="descripcion" value="Seguro hogar premium"/>
+            <column name="cliente_id" valueComputed="(SELECT id FROM clientes WHERE dni = '88990011H')"/>
+        </insert>
+
+        <!-- ── Más siniestros ────────────────────────────────────────── -->
+        <insert tableName="siniestros">
+            <column name="numero_siniestro" value="SIN-2024-0003"/>
+            <column name="descripcion" value="Incendio en cocina con daños estructurales"/>
+            <column name="estado" value="RESUELTO"/>
+            <column name="fecha_apertura" valueDate="2024-08-05"/>
+            <column name="fecha_resolucion" valueDate="2024-09-12"/>
+            <column name="importe_reclamado" valueNumeric="18500.00"/>
+            <column name="importe_indemnizado" valueNumeric="16000.00"/>
+            <column name="observaciones" value="Daños cubiertos por la póliza salvo franquicia"/>
+            <column name="poliza_id" valueComputed="(SELECT id FROM polizas WHERE numero_poliza = 'POL-2024-00003')"/>
+            <column name="perito_id" valueComputed="(SELECT id FROM usuarios WHERE username = 'perito1')"/>
+        </insert>
+        <insert tableName="siniestros">
+            <column name="numero_siniestro" value="SIN-2024-0004"/>
+            <column name="descripcion" value="Robo del vehículo en aparcamiento público"/>
+            <column name="estado" value="DENEGADO"/>
+            <column name="fecha_apertura" valueDate="2024-09-01"/>
+            <column name="fecha_resolucion" valueDate="2024-09-28"/>
+            <column name="importe_reclamado" valueNumeric="22000.00"/>
+            <column name="observaciones" value="El vehículo no estaba en el listado de la póliza en el momento del robo"/>
+            <column name="poliza_id" valueComputed="(SELECT id FROM polizas WHERE numero_poliza = 'POL-2024-00005')"/>
+            <column name="perito_id" valueComputed="(SELECT id FROM usuarios WHERE username = 'perito1')"/>
+        </insert>
+        <insert tableName="siniestros">
+            <column name="numero_siniestro" value="SIN-2024-0005"/>
+            <column name="descripcion" value="Granizo severo con abolladuras en carrocería y luna trasera rota"/>
+            <column name="estado" value="EN_PERITACION"/>
+            <column name="fecha_apertura" valueDate="2024-11-25"/>
+            <column name="importe_reclamado" valueNumeric="4200.00"/>
+            <column name="poliza_id" valueComputed="(SELECT id FROM polizas WHERE numero_poliza = 'POL-2025-00001')"/>
+            <column name="perito_id" valueComputed="(SELECT id FROM usuarios WHERE username = 'perito1')"/>
+        </insert>
+        <insert tableName="siniestros">
+            <column name="numero_siniestro" value="SIN-2025-0001"/>
+            <column name="descripcion" value="Inundación por rotura de tubería de agua fría"/>
+            <column name="estado" value="ABIERTO"/>
+            <column name="fecha_apertura" valueDate="2025-01-10"/>
+            <column name="importe_reclamado" valueNumeric="5800.00"/>
+            <column name="poliza_id" valueComputed="(SELECT id FROM polizas WHERE numero_poliza = 'POL-2025-00002')"/>
+        </insert>
+        <insert tableName="siniestros">
+            <column name="numero_siniestro" value="SIN-2025-0002"/>
+            <column name="descripcion" value="Atropello a peatón en zona urbana con lesiones leves"/>
+            <column name="estado" value="ABIERTO"/>
+            <column name="fecha_apertura" valueDate="2025-02-03"/>
+            <column name="importe_reclamado" valueNumeric="9500.00"/>
+            <column name="poliza_id" valueComputed="(SELECT id FROM polizas WHERE numero_poliza = 'POL-2024-00005')"/>
+        </insert>
+        <insert tableName="siniestros">
+            <column name="numero_siniestro" value="SIN-2025-0003"/>
+            <column name="descripcion" value="Diagnóstico cáncer — cobertura oncológica activada"/>
+            <column name="estado" value="EN_PERITACION"/>
+            <column name="fecha_apertura" valueDate="2025-02-15"/>
+            <column name="importe_reclamado" valueNumeric="35000.00"/>
+            <column name="poliza_id" valueComputed="(SELECT id FROM polizas WHERE numero_poliza = 'POL-2024-00004')"/>
+            <column name="perito_id" valueComputed="(SELECT id FROM usuarios WHERE username = 'perito1')"/>
+        </insert>
+
+        <!-- Logs de auditoría para siniestros resueltos/denegados -->
+        <insert tableName="log_siniestro">
+            <column name="siniestro_id" valueComputed="(SELECT id FROM siniestros WHERE numero_siniestro = 'SIN-2024-0003')"/>
+            <column name="estado_anterior" value="ABIERTO"/>
+            <column name="estado_nuevo" value="EN_PERITACION"/>
+            <column name="observaciones" value="Perito asignado para inspección"/>
+            <column name="usuario_id" valueComputed="(SELECT id FROM usuarios WHERE username = 'gestor1')"/>
+            <column name="fecha" valueDate="2024-08-10"/>
+        </insert>
+        <insert tableName="log_siniestro">
+            <column name="siniestro_id" valueComputed="(SELECT id FROM siniestros WHERE numero_siniestro = 'SIN-2024-0003')"/>
+            <column name="estado_anterior" value="EN_PERITACION"/>
+            <column name="estado_nuevo" value="RESUELTO"/>
+            <column name="observaciones" value="Daños cubiertos por la póliza salvo franquicia"/>
+            <column name="usuario_id" valueComputed="(SELECT id FROM usuarios WHERE username = 'perito1')"/>
+            <column name="fecha" valueDate="2024-09-12"/>
+        </insert>
+        <insert tableName="log_siniestro">
+            <column name="siniestro_id" valueComputed="(SELECT id FROM siniestros WHERE numero_siniestro = 'SIN-2024-0004')"/>
+            <column name="estado_anterior" value="ABIERTO"/>
+            <column name="estado_nuevo" value="EN_PERITACION"/>
+            <column name="usuario_id" valueComputed="(SELECT id FROM usuarios WHERE username = 'gestor1')"/>
+            <column name="fecha" valueDate="2024-09-05"/>
+        </insert>
+        <insert tableName="log_siniestro">
+            <column name="siniestro_id" valueComputed="(SELECT id FROM siniestros WHERE numero_siniestro = 'SIN-2024-0004')"/>
+            <column name="estado_anterior" value="EN_PERITACION"/>
+            <column name="estado_nuevo" value="DENEGADO"/>
+            <column name="observaciones" value="El vehículo no estaba en el listado de la póliza en el momento del robo"/>
+            <column name="usuario_id" valueComputed="(SELECT id FROM usuarios WHERE username = 'perito1')"/>
+            <column name="fecha" valueDate="2024-09-28"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
