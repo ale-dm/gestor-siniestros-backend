@@ -41,6 +41,7 @@ public class SiniestroService {
     private final LogSiniestroRepository logSiniestroRepository;
     private final LogSiniestroService logSiniestroService;
     private final SiniestroMapper siniestroMapper;
+    private final TransaccionRetry transaccionRetry;
 
     public PageResponse<SiniestroResponse> listar(EstadoSiniestro estado, Long peritoId, int page, int size) {
         var pageable = PageRequest.of(page, size, Sort.by("fechaApertura").descending());
@@ -62,23 +63,27 @@ public class SiniestroService {
                 .toList();
     }
 
-    @Transactional
     public SiniestroResponse crear(SiniestroRequest request) {
-        Poliza poliza = polizaRepository.findById(request.polizaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Póliza", request.polizaId()));
+        Usuario usuarioActual = getUsuarioActual();
+        // El número se genera dentro de la transacción con reintento para evitar
+        // colisiones del número secuencial bajo concurrencia.
+        return transaccionRetry.enNuevaTransaccionConReintento(3, () -> {
+            Poliza poliza = polizaRepository.findById(request.polizaId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Póliza", request.polizaId()));
 
-        Siniestro siniestro = Siniestro.builder()
-                .numeroSiniestro(generarNumero())
-                .descripcion(request.descripcion())
-                .estado(EstadoSiniestro.ABIERTO)
-                .fechaApertura(LocalDateTime.now())
-                .importeReclamado(request.importeReclamado())
-                .poliza(poliza)
-                .build();
+            Siniestro siniestro = Siniestro.builder()
+                    .numeroSiniestro(generarNumero())
+                    .descripcion(request.descripcion())
+                    .estado(EstadoSiniestro.ABIERTO)
+                    .fechaApertura(LocalDateTime.now())
+                    .importeReclamado(request.importeReclamado())
+                    .poliza(poliza)
+                    .build();
 
-        siniestro = siniestroRepository.save(siniestro);
-        logSiniestroService.registrar(siniestro, null, "Siniestro abierto", getUsuarioActual());
-        return siniestroMapper.toResponse(siniestro);
+            siniestro = siniestroRepository.save(siniestro);
+            logSiniestroService.registrar(siniestro, null, "Siniestro abierto", usuarioActual);
+            return siniestroMapper.toResponse(siniestro);
+        });
     }
 
     @Transactional
@@ -109,7 +114,9 @@ public class SiniestroService {
         }
 
         siniestro.setEstado(estadoNuevo);
-        siniestro.setObservaciones(request.observaciones());
+        if (request.observaciones() != null) {
+            siniestro.setObservaciones(request.observaciones());
+        }
         siniestro = siniestroRepository.save(siniestro);
         logSiniestroService.registrar(siniestro, estadoAnterior, request.observaciones(), usuarioActual);
 
@@ -131,6 +138,10 @@ public class SiniestroService {
             throw new BusinessException("El usuario asignado debe tener rol PERITO");
         }
 
+        if (Boolean.FALSE.equals(perito.getActivo())) {
+            throw new BusinessException("No se puede asignar un perito desactivado");
+        }
+
         siniestro.setPerito(perito);
         return siniestroMapper.toResponse(siniestroRepository.save(siniestro));
     }
@@ -140,6 +151,10 @@ public class SiniestroService {
 
         if (actual == EstadoSiniestro.RESUELTO || actual == EstadoSiniestro.DENEGADO) {
             throw new BusinessException("No se puede cambiar el estado de un siniestro " + actual);
+        }
+
+        if (estadoNuevo == EstadoSiniestro.ABIERTO) {
+            throw new BusinessException("No se puede revertir un siniestro al estado ABIERTO");
         }
 
         if (estadoNuevo == EstadoSiniestro.EN_PERITACION && siniestro.getPerito() == null) {

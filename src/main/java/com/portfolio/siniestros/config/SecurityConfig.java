@@ -2,9 +2,11 @@ package com.portfolio.siniestros.config;
 
 import com.portfolio.siniestros.security.JwtFilter;
 import com.portfolio.siniestros.security.UserDetailsServiceImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -41,10 +43,27 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(restAuthenticationEntryPoint())
+            )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    /**
+     * Devuelve 401 (no el 403 por defecto) cuando una petición llega sin
+     * autenticación a un recurso protegido.
+     */
+    @Bean
+    public AuthenticationEntryPoint restAuthenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(
+                    "{\"status\":401,\"error\":\"Unauthorized\",\"message\":\"No autenticado\"}");
+        };
     }
 
     @Bean

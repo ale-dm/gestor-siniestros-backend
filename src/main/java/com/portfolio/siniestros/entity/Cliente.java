@@ -2,6 +2,7 @@ package com.portfolio.siniestros.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "clientes")
 @EntityListeners(AuditingEntityListener.class)
+@BatchSize(size = 50)
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,6 +48,7 @@ public class Cliente {
     private Boolean activo = true;
 
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
     @Builder.Default
     private List<Poliza> polizas = new ArrayList<>();
 

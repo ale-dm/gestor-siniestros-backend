@@ -8,8 +8,9 @@ import com.portfolio.siniestros.entity.LogSiniestro;
 import com.portfolio.siniestros.entity.Siniestro;
 import com.portfolio.siniestros.entity.Usuario;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", uses = {PolizaMapper.class})
+@Mapper(componentModel = "spring", uses = {PolizaMapper.class}, unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface SiniestroMapper {
 
     SiniestroResponse toResponse(Siniestro siniestro);

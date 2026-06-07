@@ -6,8 +6,10 @@ import com.portfolio.siniestros.dto.response.AuthResponse;
 import com.portfolio.siniestros.entity.Usuario;
 import com.portfolio.siniestros.repository.UsuarioRepository;
 import com.portfolio.siniestros.security.JwtService;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,11 +42,19 @@ public class AuthService {
     }
 
     public AuthResponse refresh(RefreshTokenRequest request) {
-        String username = jwtService.extractUsername(request.refreshToken());
+        final String refreshToken = request.refreshToken();
+
+        final String username;
+        try {
+            username = jwtService.extractUsername(refreshToken);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new BadCredentialsException("Refresh token inválido o expirado");
+        }
+
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        if (!jwtService.isTokenValid(request.refreshToken(), userDetails)) {
-            throw new org.springframework.security.authentication.BadCredentialsException("Refresh token inválido o expirado");
+        if (!jwtService.isRefreshToken(refreshToken) || !jwtService.isTokenValid(refreshToken, userDetails)) {
+            throw new BadCredentialsException("Refresh token inválido o expirado");
         }
 
         Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow();

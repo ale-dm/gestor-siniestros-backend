@@ -5,6 +5,7 @@ import com.portfolio.siniestros.entity.enums.EstadoPoliza;
 import com.portfolio.siniestros.entity.enums.TipoPoliza;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,8 +14,7 @@ import java.util.List;
 
 public interface PolizaRepository extends JpaRepository<Poliza, Long> {
 
-    boolean existsByNumeroPoliza(String numeroPoliza);
-
+    @EntityGraph(attributePaths = "cliente")
     @Query("""
             SELECT p FROM Poliza p
             WHERE (:estado IS NULL OR p.estado = :estado)
@@ -25,8 +25,6 @@ public interface PolizaRepository extends JpaRepository<Poliza, Long> {
             @Param("tipo") TipoPoliza tipo,
             Pageable pageable
     );
-
-    List<Poliza> findByClienteIdAndEstado(Long clienteId, EstadoPoliza estado);
 
     @Query("SELECT COALESCE(MAX(CAST(SUBSTRING(p.numeroPoliza, 10) AS int)), 0) FROM Poliza p WHERE p.numeroPoliza LIKE :prefix%")
     int findMaxSecuenciaByPrefix(@Param("prefix") String prefix);

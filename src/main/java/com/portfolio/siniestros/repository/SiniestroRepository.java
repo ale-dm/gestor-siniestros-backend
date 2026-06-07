@@ -4,6 +4,7 @@ import com.portfolio.siniestros.entity.Siniestro;
 import com.portfolio.siniestros.entity.enums.EstadoSiniestro;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,7 @@ import java.util.List;
 
 public interface SiniestroRepository extends JpaRepository<Siniestro, Long> {
 
+    @EntityGraph(attributePaths = {"poliza", "perito"})
     @Query("""
             SELECT s FROM Siniestro s
             WHERE (:estado IS NULL OR s.estado = :estado)

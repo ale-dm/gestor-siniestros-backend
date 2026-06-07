@@ -3,6 +3,7 @@ package com.portfolio.siniestros.entity;
 import com.portfolio.siniestros.entity.enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "usuarios")
 @EntityListeners(AuditingEntityListener.class)
+@BatchSize(size = 50)
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor

@@ -4,6 +4,7 @@ import com.portfolio.siniestros.entity.enums.EstadoPoliza;
 import com.portfolio.siniestros.entity.enums.TipoPoliza;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "polizas")
 @EntityListeners(AuditingEntityListener.class)
+@BatchSize(size = 50)
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -58,6 +60,7 @@ public class Poliza {
     private Cliente cliente;
 
     @OneToMany(mappedBy = "poliza", fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
     @Builder.Default
     private List<Siniestro> siniestros = new ArrayList<>();
 
