@@ -3,6 +3,7 @@ package com.portfolio.siniestros.entity;
 import com.portfolio.siniestros.entity.enums.EstadoSiniestro;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -37,7 +38,7 @@ public class LogSiniestro {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private LocalDateTime fecha = LocalDateTime.now();
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime fecha;
 }

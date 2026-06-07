@@ -8,10 +8,11 @@ import com.portfolio.siniestros.entity.Poliza;
 import com.portfolio.siniestros.entity.enums.EstadoPoliza;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface ClienteMapper {
 
     ClienteResumenResponse toResumen(Cliente cliente);

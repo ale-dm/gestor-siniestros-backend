@@ -30,9 +30,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -46,6 +48,7 @@ class SiniestroServiceTest {
     @Mock LogSiniestroRepository logSiniestroRepository;
     @Mock LogSiniestroService logSiniestroService;
     @Mock SiniestroMapper siniestroMapper;
+    @Mock TransaccionRetry transaccionRetry;
 
     @InjectMocks SiniestroService service;
 
@@ -94,6 +97,9 @@ class SiniestroServiceTest {
     @BeforeEach
     void limpiarSecurityContext() {
         SecurityContextHolder.clearContext();
+        // El helper de reintento ejecuta la acción directamente en los tests unitarios.
+        lenient().when(transaccionRetry.enNuevaTransaccionConReintento(anyInt(), any()))
+                .thenAnswer(inv -> ((Supplier<?>) inv.getArgument(1)).get());
     }
 
     // ── crear() ─────────────────────────────────────────────────────────────
@@ -276,6 +282,19 @@ class SiniestroServiceTest {
         }
 
         @Test
+        @DisplayName("No se puede revertir un siniestro al estado ABIERTO")
+        void revertir_a_abierto_lanzaException() {
+            var siniestro = siniestroEnPeritacion(perito());
+            autenticarComo(gestor());
+            when(siniestroRepository.findById(1L)).thenReturn(Optional.of(siniestro));
+
+            assertThatThrownBy(() ->
+                    service.cambiarEstado(1L, new CambioEstadoRequest(EstadoSiniestro.ABIERTO, null, null)))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("ABIERTO");
+        }
+
+        @Test
         @DisplayName("No se puede resolver directamente desde ABIERTO")
         void abierto_a_resuelto_directo_lanzaException() {
             var siniestro = siniestroAbierto();
@@ -348,6 +367,19 @@ class SiniestroServiceTest {
 
             assertThatThrownBy(() -> service.asignarPerito(1L, new AsignarPeritoRequest(99L)))
                     .isInstanceOf(ResourceNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("lanza BusinessException si el perito está desactivado")
+        void asignar_peritoDesactivado_lanzaException() {
+            var peritoInactivo = Usuario.builder().id(10L).username("perito1").rol(Rol.PERITO).activo(false).build();
+
+            when(siniestroRepository.findById(1L)).thenReturn(Optional.of(siniestroAbierto()));
+            when(usuarioRepository.findById(10L)).thenReturn(Optional.of(peritoInactivo));
+
+            assertThatThrownBy(() -> service.asignarPerito(1L, new AsignarPeritoRequest(10L)))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("desactivado");
         }
     }
 }

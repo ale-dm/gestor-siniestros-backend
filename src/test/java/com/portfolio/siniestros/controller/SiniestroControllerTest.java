@@ -61,10 +61,10 @@ class SiniestroControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/siniestros sin autenticación devuelve 403")
-    void listar_sinAutenticacion_devuelve403() throws Exception {
+    @DisplayName("GET /api/siniestros sin autenticación devuelve 401")
+    void listar_sinAutenticacion_devuelve401() throws Exception {
         mvc.perform(get("/api/siniestros"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     // ── GET /api/siniestros/{id} ─────────────────────────────────────────────

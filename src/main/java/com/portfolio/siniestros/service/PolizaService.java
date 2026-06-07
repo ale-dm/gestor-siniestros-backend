@@ -29,6 +29,7 @@ public class PolizaService {
     private final PolizaRepository polizaRepository;
     private final ClienteRepository clienteRepository;
     private final PolizaMapper polizaMapper;
+    private final TransaccionRetry transaccionRetry;
 
     public PageResponse<PolizaResponse> listar(EstadoPoliza estado, TipoPoliza tipo, int page, int size) {
         var pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -42,26 +43,28 @@ public class PolizaService {
         return polizaMapper.toResponse(findOrThrow(id));
     }
 
-    @Transactional
     public PolizaResponse crear(PolizaRequest request) {
         validarFechas(request);
 
-        Cliente cliente = clienteRepository.findById(request.clienteId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente", request.clienteId()));
+        // Número generado dentro de la transacción con reintento ante colisión de unicidad.
+        return transaccionRetry.enNuevaTransaccionConReintento(3, () -> {
+            Cliente cliente = clienteRepository.findById(request.clienteId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente", request.clienteId()));
 
-        Poliza poliza = Poliza.builder()
-                .numeroPoliza(generarNumero())
-                .tipo(request.tipo())
-                .estado(EstadoPoliza.ACTIVA)
-                .fechaInicio(request.fechaInicio())
-                .fechaVencimiento(request.fechaVencimiento())
-                .coberturaMaxima(request.coberturaMaxima())
-                .primaMensual(request.primaMensual())
-                .descripcion(request.descripcion())
-                .cliente(cliente)
-                .build();
+            Poliza poliza = Poliza.builder()
+                    .numeroPoliza(generarNumero())
+                    .tipo(request.tipo())
+                    .estado(EstadoPoliza.ACTIVA)
+                    .fechaInicio(request.fechaInicio())
+                    .fechaVencimiento(request.fechaVencimiento())
+                    .coberturaMaxima(request.coberturaMaxima())
+                    .primaMensual(request.primaMensual())
+                    .descripcion(request.descripcion())
+                    .cliente(cliente)
+                    .build();
 
-        return polizaMapper.toResponse(polizaRepository.save(poliza));
+            return polizaMapper.toResponse(polizaRepository.save(poliza));
+        });
     }
 
     @Transactional
@@ -86,8 +89,22 @@ public class PolizaService {
     @Transactional
     public PolizaResponse cambiarEstado(Long id, CambioEstadoPolizaRequest request) {
         Poliza poliza = findOrThrow(id);
+        validarTransicionEstado(poliza.getEstado(), request.estado());
         poliza.setEstado(request.estado());
         return polizaMapper.toResponse(polizaRepository.save(poliza));
+    }
+
+    /**
+     * Reglas de transición de estado de una póliza:
+     * ACTIVA ↔ SUSPENDIDA, y ambas pueden pasar a CANCELADA (estado terminal).
+     */
+    private void validarTransicionEstado(EstadoPoliza actual, EstadoPoliza nuevo) {
+        if (actual == nuevo) {
+            throw new BusinessException("La póliza ya se encuentra en estado " + actual);
+        }
+        if (actual == EstadoPoliza.CANCELADA) {
+            throw new BusinessException("Una póliza CANCELADA no puede cambiar de estado");
+        }
     }
 
     private void validarFechas(PolizaRequest request) {
